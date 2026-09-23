@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 const AddBookPage = () => {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = user ? user.token : null;
 
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -17,16 +19,21 @@ const AddBookPage = () => {
     try {
       const res = await fetch("/api/books", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(newBook),
       });
       if (!res.ok) throw new Error("Failed to add book");
+      return true;
     } catch (error) {
-      console.error(error);
+      console.error("Error adding book:", error);
+      return false;
     }
   };
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
     const newBook = {
       title,
@@ -40,8 +47,8 @@ const AddBookPage = () => {
         borrower,
       },
     };
-    addBook(newBook);
-    navigate("/");
+    const success = await addBook(newBook);
+    if (success) navigate("/");
   };
 
   return (
@@ -49,31 +56,67 @@ const AddBookPage = () => {
       <h2>Add a New Book</h2>
       <form onSubmit={submitForm}>
         <label>Book Title:</label>
-        <input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} />
+        <input
+          type="text"
+          required
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
 
         <label>Author:</label>
-        <input type="text" required value={author} onChange={(e) => setAuthor(e.target.value)} />
+        <input
+          type="text"
+          required
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+        />
 
         <label>ISBN:</label>
-        <input type="text" required value={isbn} onChange={(e) => setIsbn(e.target.value)} />
+        <input
+          type="text"
+          required
+          value={isbn}
+          onChange={(e) => setIsbn(e.target.value)}
+        />
 
         <label>Publisher:</label>
-        <input type="text" required value={publisher} onChange={(e) => setPublisher(e.target.value)} />
+        <input
+          type="text"
+          required
+          value={publisher}
+          onChange={(e) => setPublisher(e.target.value)}
+        />
 
         <label>Genre:</label>
-        <input type="text" required value={genre} onChange={(e) => setGenre(e.target.value)} />
+        <input
+          type="text"
+          required
+          value={genre}
+          onChange={(e) => setGenre(e.target.value)}
+        />
 
         <label>Available:</label>
-        <select value={isAvailable} onChange={(e) => setIsAvailable(e.target.value)}>
+        <select
+          value={isAvailable}
+          onChange={(e) => setIsAvailable(e.target.value)}
+        >
           <option value="true">Yes</option>
           <option value="false">No</option>
         </select>
 
         <label>Due Date:</label>
-        <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+        />
 
         <label>Borrower:</label>
-        <input type="text" value={borrower} onChange={(e) => setBorrower(e.target.value)} />
+        <input
+          type="text"
+          value={borrower}
+          onChange={(e) => setBorrower(e.target.value)}
+        />
 
         <button>Add Book</button>
       </form>
