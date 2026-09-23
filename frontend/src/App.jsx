@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BookPage from "./pages/BookPage"
+import EditBookPage from "./pages/EditBookPage"
 
 // pages & components
 import Home from "./pages/HomePage";
@@ -18,6 +19,7 @@ const App = () => {
             <Route path="/add-book" element={<AddBookPage />} />
             <Route path="*" element={<NotFoundPage />} />
             <Route path = "/books/:id" element={<BookPage/>} />
+            <Route path = "/edit-book/:id" element={<EditBookPage/>} />
           </Routes>
         </div>
       </BrowserRouter>
